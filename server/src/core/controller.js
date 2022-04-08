@@ -42,6 +42,25 @@ const searchHandler = async (req, res, next) => {
   }
 };
 
+const dynamicSearchHandler = async (req, res, next) => {
+  try {
+    const ModelName = req.modelName;
+    const { body } = req;
+    req.log.info({ body }, `search ${ModelName}`);
+    const data =
+      body.pageSize === -1
+        ? await getDropdownData(
+          req.searchQuery,
+          { alias: 1, name: 1 },
+          ModelName
+        )
+        : await search(body, req.searchQuery, ModelName);
+    return res.status(200).send({ data, total: 0 });
+  } catch (error) {
+    return next(error, req, res);
+  }
+};
+
 const countHandler = async (req, res, next) => {
   try {
     const ModelName = req.modelName;

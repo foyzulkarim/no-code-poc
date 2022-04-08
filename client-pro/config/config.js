@@ -219,6 +219,29 @@ export default defineConfig({
       ],
     },
     {
+      path: '/dynamics',
+      icon: 'clock',
+      name: 'Dynamic',
+      routes: [
+        {
+          path: '/list',
+          redirect: '/dynamics/new',
+        },
+        // {
+        //   name: 'List',
+        //   icon: 'smile',
+        //   path: '/dynamics/list',
+        //   component: './dynamic/list',
+        // },
+        {
+          name: 'New',
+          icon: 'smile',
+          path: '/dynamics/new',
+          component: './dynamic/entry',
+        },
+      ],
+    },
+    {
       path: '/form',
       icon: 'form',
       name: 'form',

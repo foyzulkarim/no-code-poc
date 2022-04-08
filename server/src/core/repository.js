@@ -46,14 +46,14 @@ const searchOne = async (query, modelName) => {
   return data;
 };
 
-const dynamicSearch = async (query, modelName) => {
+const searchAll = async (query, modelName) => {
   const data = await mongoose.models[modelName].find(query).lean().exec();
   return data;
 };
 
 const getSortClause = (payload) => {
   let sort = {};
-  if (payload.sort) {
+  if (payload?.sort) {
     const key = payload.sort;
     const value = parseInt(payload.order, 10) ?? 1;
     sort[key] = value;
@@ -79,6 +79,20 @@ const search = async (payload, query, modelName) => {
     .skip(skip)
     .limit(take);
 
+  return data;
+};
+
+const dynamicSearch2 = async (payload, query, modelName) => {
+  const sort = getSortClause(payload);
+  const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
+  const skip = (parseInt(payload.current, 10) - 1) * take;
+  const schema = await searchOne({ name: modelName }, "AppSchema");
+  const DynamicModel = mongoose.model(
+    schema.name,
+    new mongoose.Schema(schema.body)
+  );
+
+  const data = await DynamicModel.find(query).sort(sort).skip(skip).limit(take);
   return data;
 };
 
@@ -110,11 +124,12 @@ module.exports = {
   deleteById,
   getById,
   searchOne,
-  dynamicSearch,
+  dynamicSearch: searchAll,
   updateAll,
   getSortClause,
   count,
   search,
   getDropdownData,
   dynamicSave,
+  dynamicSearch2,
 };
