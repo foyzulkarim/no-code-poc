@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Card, message } from 'antd';
 import ProForm, {
   ProFormDatePicker,
@@ -11,9 +11,39 @@ import ProForm, {
 } from '@ant-design/pro-form';
 import { useRequest } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import { save } from '../service';
+import { save, getById } from '../service';
 
 const EntryForm = (props) => {
+
+  const [inputFields, setInputFields] = useState([]);
+
+  useEffect(() => {
+    const load = async () => {
+      console.log(props.params)
+      const { id } = props.match.params;
+      if (id) {
+        const result = await getById(id);
+        if (result instanceof Error) {
+          message.error(result.message);
+        }
+        else {
+          console.log('result', result);
+          // const fields = []
+          const fields = Object.keys(result.body).map(key => {
+            return {
+              name: key,
+              value: result.body[key],
+            }
+          });
+          setInputFields(fields);
+        }
+      }
+    }
+    load();
+    return () => {
+      console.log('clean up');
+    };
+  }, []);
 
   const [form] = Form.useForm();
 
@@ -46,20 +76,18 @@ const EntryForm = (props) => {
           onFinish={(v) => onFinish(v)}
           form={form}
         >
-
-          <ProFormText
+          {inputFields.map(field => (<ProFormText
             width="md"
-            label="Name"
-            name="name"
+            label={field.name}
+            name={field.name}
             rules={[
               {
                 required: true,
-                message: 'Please enter resource name',
+                message: `Please enter ${field.name}`,
               },
             ]}
-            placeholder="Please enter resource name"
-          />
-
+            placeholder={`Please enter ${field.name}`}
+          />))}
 
         </ProForm>
       </Card>

@@ -220,7 +220,7 @@ export default defineConfig({
     },
     {
       path: '/dynamics',
-      icon: 'clock',
+      icon: 'form',
       name: 'Dynamic',
       routes: [
         {
@@ -236,7 +236,7 @@ export default defineConfig({
         {
           name: 'New',
           icon: 'smile',
-          path: '/dynamics/new',
+          path: '/dynamics/new/:id',
           component: './dynamic/entry',
         },
       ],
