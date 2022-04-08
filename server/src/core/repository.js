@@ -92,6 +92,18 @@ const getDropdownData = async (query, project, modelName) => {
   return data;
 };
 
+const dynamicSave = async (item, modelName) => {
+  const schema = await searchOne({ name: modelName }, "AppSchema");
+  const DynamicModel = mongoose.model(
+    schema.name,
+    new mongoose.Schema(schema.body)
+  );
+  const model = new DynamicModel(item);
+  const savedItem = await model.save();
+  eventEmitter.emit(`${modelName}Created`, savedItem);
+  return savedItem;
+};
+
 module.exports = {
   save,
   update,
@@ -104,4 +116,5 @@ module.exports = {
   count,
   search,
   getDropdownData,
+  dynamicSave,
 };

@@ -31,10 +31,10 @@ const searchHandler = async (req, res, next) => {
     const data =
       body.pageSize === -1
         ? await getDropdownData(
-            req.searchQuery,
-            { alias: 1, name: 1 },
-            ModelName
-          )
+          req.searchQuery,
+          { alias: 1, name: 1 },
+          ModelName
+        )
         : await search(body, req.searchQuery, ModelName);
     return res.status(200).send({ data, total: 0 });
   } catch (error) {
