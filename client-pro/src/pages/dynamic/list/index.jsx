@@ -244,7 +244,7 @@ const TableList = (props) => {
             setSort(sort);
           }}
           dataSource={data.data}
-          columns={columns}
+          columns={dataColumns}
           rowSelection={false}
           pagination={false}
         />

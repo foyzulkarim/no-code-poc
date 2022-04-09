@@ -15,17 +15,17 @@ export default function access(initialState) {
       return isAllowed;
     },
     canShow: (element) => {
-      console.log('access.element', element);
+      // console.log('access.element', element);
       const isAllowed = permissions && Array.isArray(permissions)
         && permissions.some((permission) => permission.resourceName === element);
-      console.log('access.isAllowed', isAllowed);
+      // console.log('access.isAllowed', isAllowed);
       return isAllowed;
     },
     isDisabled: (element) => {
-      console.log('access.element', element);
+      // console.log('access.element', element);
       const isDisabled = permissions && Array.isArray(permissions)
         && permissions.some((permission) => permission.resourceName === element && permission.isDisabled);
-      console.log('access.isDisabled', isDisabled);
+      // console.log('access.isDisabled', isDisabled);
       return isDisabled;
     }
   };
