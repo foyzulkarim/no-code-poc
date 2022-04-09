@@ -87,12 +87,15 @@ const dynamicSearch2 = async (payload, query, modelName) => {
   const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
   const skip = (parseInt(payload.current, 10) - 1) * take;
   const schema = await searchOne({ name: modelName }, "AppSchema");
-  const DynamicModel = mongoose.model(
-    schema.name,
-    new mongoose.Schema(schema.body)
-  );
+  if (mongoose.models[modelName] === undefined) {
+    mongoose.model(schema.name, new mongoose.Schema(schema.body));
+  }
 
-  const data = await DynamicModel.find(query).sort(sort).skip(skip).limit(take);
+  const data = await mongoose.models[modelName]
+    .find(query)
+    .sort(sort)
+    .skip(skip)
+    .limit(take);
   return data;
 };
 
@@ -108,11 +111,14 @@ const getDropdownData = async (query, project, modelName) => {
 
 const dynamicSave = async (item, modelName) => {
   const schema = await searchOne({ name: modelName }, "AppSchema");
-  const DynamicModel = mongoose.model(
-    schema.name,
-    new mongoose.Schema(schema.body)
-  );
-  const model = new DynamicModel(item);
+  if (mongoose.models[modelName] === undefined) {
+    mongoose.model(schema.name, new mongoose.Schema(schema.body));
+  }
+  // const DynamicModel = mongoose.model(
+  //   schema.name,
+  //   new mongoose.Schema(schema.body)
+  // );
+  const model = new mongoose.models[modelName](item);
   const savedItem = await model.save();
   eventEmitter.emit(`${modelName}Created`, savedItem);
   return savedItem;

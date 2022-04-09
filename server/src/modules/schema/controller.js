@@ -26,17 +26,23 @@ const countHandler = async (req, res, next) => {
 
 const dynamicSaveHandler = async (req, res) => {
   const { modelName, payload } = req.body;
-  req.modelName = modelName;
-  const response = await dynamicSave(payload, modelName);
-  return res.status(200).send(response);
+  if (modelName) {
+    req.modelName = modelName;
+    const response = await dynamicSave(payload, modelName);
+    return res.status(200).send(response);
+  }
+  return res.status(200).send({});
 };
 
 const dynamicSearch = async (req, res) => {
   const { modelName, payload } = req.body;
   req.modelName = modelName;
   req.searchQuery = {};
-  const data = await dynamicSearch2(payload, req.searchQuery, modelName);
-  return res.status(200).send({ data, total: 0 });
+  if (modelName) {
+    const data = await dynamicSearch2(payload, req.searchQuery, modelName);
+    return res.status(200).send({ data, total: 0 });
+  }
+  return res.status(200).send({ data: [], total: 0 });
 };
 
 router.get("/detail", getByIdHandler);

@@ -1,7 +1,7 @@
 import { get, post, put, del } from '/src/services/http-service';
 
 export async function search(params) {
-    return await post('/api/appschemas/search', params);
+    return await post('/api/appschemas/dynamicSearch', params);
 }
 
 export async function count(params, options) {
@@ -18,6 +18,10 @@ export async function update(params) {
 
 export async function save(params) {
     return await post('/api/appschemas/dynamicsave', params);
+}
+
+export async function getColumns(params) {
+    return await post('/api/appschemas/getColumns', params);
 }
 
 export async function remove(id, options) {

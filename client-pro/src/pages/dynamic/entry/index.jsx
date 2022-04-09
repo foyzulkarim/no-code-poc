@@ -15,6 +15,7 @@ import { save, getById } from '../service';
 
 const EntryForm = (props) => {
 
+  const [modelName, setModelName] = useState('');
   const [inputFields, setInputFields] = useState([]);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const EntryForm = (props) => {
         }
         else {
           console.log('result', result);
-          // const fields = []
+          setModelName(result.name);
           const fields = Object.keys(result.body).map(key => {
             return {
               name: key,
@@ -49,7 +50,7 @@ const EntryForm = (props) => {
 
   const onFinish = async (values) => {
     console.log(values, form);
-    const result = await save(values);
+    const result = await save({ modelName: modelName, payload: values });
     console.log('resource', result);
     if (result instanceof Error) {
       message.error(result.message);

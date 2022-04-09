@@ -219,20 +219,52 @@ export default defineConfig({
       ],
     },
     {
+      // access: 'canAccess',
+      path: '/appschemas',
+      icon: 'form',
+      name: 'App schemas',
+      routes: [
+        {
+          path: '/appschemas',
+          redirect: '/appschemas/list',
+        },
+        {
+          name: 'List',
+          icon: 'smile',
+          path: '/appschemas/list',
+          component: './appschema/list',
+        },
+        {
+          name: 'New',
+          icon: 'smile',
+          path: '/appschemas/new',
+          component: './appschema/entry',
+        },
+        {
+          name: 'Update',
+          hideInMenu: true,
+          icon: 'smile',
+          path: '/appschemas/edit/:id',
+          component: './appschema/update',
+        },
+      ],
+    },
+    {
+      hideInMenu: true,
       path: '/dynamics',
       icon: 'form',
       name: 'Dynamic',
       routes: [
         {
           path: '/list',
-          redirect: '/dynamics/new',
+          redirect: '/appschemas/list',
         },
-        // {
-        //   name: 'List',
-        //   icon: 'smile',
-        //   path: '/dynamics/list',
-        //   component: './dynamic/list',
-        // },
+        {
+          name: 'List',
+          icon: 'smile',
+          path: '/dynamics/list/:id',
+          component: './dynamic/list',
+        },
         {
           name: 'New',
           icon: 'smile',
