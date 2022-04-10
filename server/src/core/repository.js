@@ -97,15 +97,15 @@ const getQuery = async (payload, modelName) => {
   return query;
 };
 
-const dynamicSearch2 = async (payload, query, modelName) => {
-  const sort = getSortClause(payload);
+const dynamicSearch2 = async (request, modelName) => {
+  const sort = getSortClause(request);
   const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
-  const skip = (parseInt(payload.current, 10) - 1) * take;
+  const skip = (parseInt(request.current, 10) - 1) * take;
   const schema = await searchOne({ name: modelName }, "AppSchema");
   if (mongoose.models[modelName] === undefined) {
     mongoose.model(schema.name, new mongoose.Schema(schema.body));
   }
-  const dynamicQuery = await getQuery(payload, modelName);
+  const dynamicQuery = await getQuery(request.payload, modelName);
   const data = await mongoose.models[modelName]
     .find(dynamicQuery)
     .sort(sort)

@@ -35,11 +35,9 @@ const dynamicSaveHandler = async (req, res) => {
 };
 
 const dynamicSearch = async (req, res) => {
-  const { modelName, payload, query } = req.body;
-  req.modelName = modelName;
-  req.searchQuery = query || {};
+  const { modelName } = req.body;
   if (modelName) {
-    const data = await dynamicSearch2(payload, req.searchQuery, modelName);
+    const data = await dynamicSearch2(req.body, modelName);
     return res.status(200).send({ data, total: 0 });
   }
   return res.status(200).send({ data: [], total: 0 });
