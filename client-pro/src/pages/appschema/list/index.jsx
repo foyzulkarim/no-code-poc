@@ -129,18 +129,18 @@ const TableList = (props) => {
         );
       },
     },
-    {
-      title: 'Schema',
-      dataIndex: 'body',
-      sorter: true,
-      render: (dom, entity) => {
-        return (
-          <pre>
-            <code>{JSON.stringify(entity.body, null, 2)}</code>
-          </pre>
-        );
-      }
-    },
+    // {
+    //   title: 'Schema',
+    //   dataIndex: 'body',
+    //   sorter: true,
+    //   render: (dom, entity) => {
+    //     return (
+    //       <pre>
+    //         <code>{JSON.stringify(entity.body, null, 2)}</code>
+    //       </pre>
+    //     );
+    //   }
+    // },
     {
       title: 'Updated At',
       dataIndex: 'updatedAt',

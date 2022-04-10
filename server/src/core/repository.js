@@ -82,6 +82,21 @@ const search = async (payload, query, modelName) => {
   return data;
 };
 
+const getQuery = async (payload, modelName) => {
+  let query = {};
+  if (payload.keyword) {
+    const schema = await searchOne({ name: modelName }, "AppSchema");
+    const keys = Object.keys(schema.body).filter(
+      (key) => schema.body[key].isSearchable === true
+    );
+    const queries = keys.map((k) => ({
+      [k]: { $regex: payload.keyword, $options: "i" },
+    }));
+    query = { $or: queries };
+  }
+  return query;
+};
+
 const dynamicSearch2 = async (payload, query, modelName) => {
   const sort = getSortClause(payload);
   const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
@@ -90,9 +105,9 @@ const dynamicSearch2 = async (payload, query, modelName) => {
   if (mongoose.models[modelName] === undefined) {
     mongoose.model(schema.name, new mongoose.Schema(schema.body));
   }
-
+  const dynamicQuery = await getQuery(payload, modelName);
   const data = await mongoose.models[modelName]
-    .find(query)
+    .find(dynamicQuery)
     .sort(sort)
     .skip(skip)
     .limit(take);

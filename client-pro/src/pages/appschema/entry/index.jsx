@@ -1,5 +1,5 @@
 import React from 'react';
-import { Form, Card, message, Divider, Button, Space } from 'antd';
+import { Form, Card, message, Divider, Button, Space, Typography } from 'antd';
 import ProForm, {
   ProFormDatePicker,
   ProFormDigit,
@@ -22,21 +22,15 @@ const EntryForm = (props) => {
 
   const addField = () => {
     const formValues = form.getFieldsValue();
-    console.log('addField', fields);
-    const column = { name: formValues.label, type: formValues.type };
+    const column = { name: formValues.label, type: formValues.type, isSearchable: formValues.isSearchable, isDisplayable: formValues.isDisplayable };
     setFields([...fields, column]);
     let b = {};
-    b[column.name] = { type: column.type };
-    // fields.map(d => { b[d.name] = { type: d.type } });
-    // console.log('b', b);
+    b[column.name] = { ...column };
     setBody({ ...body, ...b });
   }
 
   const onFinish = async (values) => {
     console.log(values, form);
-    //  run(values);
-    let body = {};
-    fields.map(d => { body[d.name] = { type: d.type } })
     const payload = { name: values.name, body };
     const result = await save(payload);
     console.log(result);
@@ -80,13 +74,10 @@ const EntryForm = (props) => {
             ]}
             placeholder="Please enter collection name"
           />
-          <pre>
+          {/* <pre>
             <code>{JSON.stringify(fields, null, 2)}</code>
-          </pre>
-          <Divider plain orientation="left">
-            <Button onClick={addField}>Add field <PlusOutlined /></Button>
-          </Divider>
-
+          </pre> */}
+          <Divider />
           <ProFormText
             width="md"
             label="Label"
@@ -107,9 +98,24 @@ const EntryForm = (props) => {
               },
             ]}
           />
-          <pre>
+          <ProFormCheckbox name="isSearchable">
+            Is searchable
+          </ProFormCheckbox>
+          <ProFormCheckbox name="isDisplayable">
+            Is displayable
+          </ProFormCheckbox>
+          <Divider plain orientation="left">
+            <Button onClick={addField}>Add field <PlusOutlined /></Button>
+          </Divider>
+          <Typography.Title editable level={5} style={{ margin: 0 }}>
+            Fields
+          </Typography.Title>
+          <ul>
+            {Object.keys(body).map((k) => <li>{k}</li>)}
+          </ul>
+          {/* <pre>
             <code>{JSON.stringify(body, null, 2)}</code>
-          </pre>
+          </pre> */}
         </ProForm>
       </Card>
     </PageContainer>

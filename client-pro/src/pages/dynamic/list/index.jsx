@@ -67,7 +67,14 @@ const TableList = (props) => {
     console.log('REACT_APP_DEFAULT_PAGE_SIZE', DEFAULT_PAGE_SIZE);
     const hide = message.loading('Loading...');
     try {
-      const result = await search({ modelName, modelId, payload: searchObject, current: current, pageSize: 10, ...sort });
+      const queryStr = {};
+      const searchRequest = { modelName, modelId, payload: searchObject, current: current, pageSize: 10, ...sort };
+      if (searchObject.name) {
+        queryStr.name = { $regex: searchObject.name, $options: "i" };
+        searchRequest.query = queryStr;
+      }
+
+      const result = await search(searchRequest);
       hide();
       setData(result);
       setFetchRoles(false);
@@ -108,7 +115,8 @@ const TableList = (props) => {
         });
         // setInputFields(fields);
         console.log('fields', fields);
-        setDataColumns(fields.map(field => {
+        setDataColumns(fields.filter(field => field.value.isDisplayable).map(field => {
+          //setDataColumns(fields.map(field => {
           return {
             title: field.name,
             dataIndex: field.name,
@@ -201,12 +209,12 @@ const TableList = (props) => {
           style={{ display: 'flex', 'align-items': 'left', background: 'white', padding: '10px' }}
         >
           <Row gutter={16}>
-            <Col flex={6} key={'name'}>
+            <Col flex={10} key={'name'}>
               <Form.Item
-                name={`name`}
-                label={`Name`}
+                name={`keyword`}
+                label={`keyword`}
               >
-                <Input placeholder="Search keyword for name or alias" />
+                <Input placeholder="Search keyword" />
               </Form.Item>
             </Col>
             <Col flex={6}>
