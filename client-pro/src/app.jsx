@@ -7,6 +7,9 @@ import { BookOutlined, LinkOutlined } from '@ant-design/icons';
 const isDev = process.env.NODE_ENV === 'development';
 const loginPath = '/user/login';
 const registerPath = '/user/register';
+const forgotpasswordPath = '/user/forgotpassword';
+const resetpasswordPath = '/user/resetpassword';
+const activateaccountPath = '/user/activateaccount';
 /** 获取用户信息比较慢的时候会展示一个 loading */
 
 export const initialStateConfig = {
@@ -58,8 +61,13 @@ export const layout = ({ initialState }) => {
       console.log('onPageChange', location.pathname, initialState);
 
       if (!authStr || (JSON.parse(authStr).isAuthenticated) === false) {
-        if (location.pathname === loginPath || location.pathname === registerPath) {
-          history.push(location.pathname);
+        const allowedPath = [loginPath, registerPath, forgotpasswordPath, resetpasswordPath, activateaccountPath];
+        let pathname = location.pathname;
+        if (pathname.endsWith('/')) {
+          pathname = pathname.substring(0, pathname.length - 1);
+        }
+        if (allowedPath.indexOf(pathname) !== -1) {
+          history.push(location);
         }
         else history.push(loginPath);
       }

@@ -9,9 +9,10 @@ const save = async (item, modelName) => {
 };
 
 const update = async (item, modelName) => {
-  const doc = await mongoose.models[modelName].findOneAndUpdate(
+  const doc = await mongoose.models[modelName].updateOne(
     { _id: item._id },
-    item
+    item,
+    {}
   );
   eventEmitter.emit(`${modelName}Updated`, doc);
   return doc;
@@ -46,14 +47,14 @@ const searchOne = async (query, modelName) => {
   return data;
 };
 
-const searchAll = async (query, modelName) => {
+const dynamicSearch = async (query, modelName) => {
   const data = await mongoose.models[modelName].find(query).lean().exec();
   return data;
 };
 
 const getSortClause = (payload) => {
   let sort = {};
-  if (payload?.sort) {
+  if (payload.sort) {
     const key = payload.sort;
     const value = parseInt(payload.order, 10) ?? 1;
     sort[key] = value;
@@ -73,27 +74,13 @@ const search = async (payload, query, modelName) => {
   const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
   const skip = (parseInt(payload.current, 10) - 1) * take;
 
-  const data = await mongoose.models[modelName]
-    .find(query)
-    .sort(sort)
-    .skip(skip)
-    .limit(take);
+  const data = mongoose.models[modelName].find(query).sort(sort);
+  const result =
+    payload.pageSize === -1
+      ? await data.lean().exec()
+      : await data.skip(skip).limit(take).lean().exec();
 
-  return data;
-};
-
-const dynamicSearch2 = async (payload, query, modelName) => {
-  const sort = getSortClause(payload);
-  const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
-  const skip = (parseInt(payload.current, 10) - 1) * take;
-  const schema = await searchOne({ name: modelName }, "AppSchema");
-  const DynamicModel = mongoose.model(
-    schema.name,
-    new mongoose.Schema(schema.body)
-  );
-
-  const data = await DynamicModel.find(query).sort(sort).skip(skip).limit(take);
-  return data;
+  return result;
 };
 
 const getDropdownData = async (query, project, modelName) => {
@@ -106,30 +93,16 @@ const getDropdownData = async (query, project, modelName) => {
   return data;
 };
 
-const dynamicSave = async (item, modelName) => {
-  const schema = await searchOne({ name: modelName }, "AppSchema");
-  const DynamicModel = mongoose.model(
-    schema.name,
-    new mongoose.Schema(schema.body)
-  );
-  const model = new DynamicModel(item);
-  const savedItem = await model.save();
-  eventEmitter.emit(`${modelName}Created`, savedItem);
-  return savedItem;
-};
-
 module.exports = {
   save,
   update,
   deleteById,
   getById,
   searchOne,
-  dynamicSearch: searchAll,
+  dynamicSearch,
   updateAll,
   getSortClause,
   count,
   search,
   getDropdownData,
-  dynamicSave,
-  dynamicSearch2,
 };

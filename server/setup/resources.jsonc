@@ -185,6 +185,13 @@
     "type": "api"
   },
 
+  // upsert
+  {
+    "name": "/api/permissions/upsert",
+    "alias": "Permissions upsert API",
+    "type": "api"
+  },
+
   // search
   {
     "name": "/api/permissions/search",
@@ -354,6 +361,11 @@
   {
     "name": "permission-list-delete-btn",
     "alias": "Permission list delete button",
+    "type": "client"
+  },
+  {
+    "name": "product-list-delete-btn",
+    "alias": "Product list delete button",
     "type": "client"
   }
 ]

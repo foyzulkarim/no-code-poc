@@ -2,7 +2,6 @@ const { NotFound } = require("../common/errors");
 const {
   getById,
   search,
-  getDropdownData,
   count,
   save,
   update,
@@ -28,33 +27,7 @@ const searchHandler = async (req, res, next) => {
     const ModelName = req.modelName;
     const { body } = req;
     req.log.info({ body }, `search ${ModelName}`);
-    const data =
-      body.pageSize === -1
-        ? await getDropdownData(
-          req.searchQuery,
-          { alias: 1, name: 1 },
-          ModelName
-        )
-        : await search(body, req.searchQuery, ModelName);
-    return res.status(200).send({ data, total: 0 });
-  } catch (error) {
-    return next(error, req, res);
-  }
-};
-
-const dynamicSearchHandler = async (req, res, next) => {
-  try {
-    const ModelName = req.modelName;
-    const { body } = req;
-    req.log.info({ body }, `search ${ModelName}`);
-    const data =
-      body.pageSize === -1
-        ? await getDropdownData(
-          req.searchQuery,
-          { alias: 1, name: 1 },
-          ModelName
-        )
-        : await search(body, req.searchQuery, ModelName);
+    const data = await search(body, req.searchQuery, ModelName);
     return res.status(200).send({ data, total: 0 });
   } catch (error) {
     return next(error, req, res);
@@ -80,7 +53,9 @@ const saveHandler = async (req, res, next) => {
     const { body } = req;
     const id = await save(body, ModelName);
     req.log.info({ id }, `${ModelName} created`);
-    return res.status(201).send(id);
+    return res
+      .status(201)
+      .send({ success: true, message: `${ModelName} created` });
   } catch (error) {
     return next(error, req, res);
   }
@@ -91,7 +66,9 @@ const updateHandler = async (req, res, next) => {
     const ModelName = req.modelName;
     const { body } = req;
     const id = await update(body, ModelName);
-    return res.status(200).send(id);
+    return res
+      .status(200)
+      .send({ success: true, message: `${ModelName} updated` });
   } catch (error) {
     return next(error, req, res);
   }

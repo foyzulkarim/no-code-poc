@@ -21,7 +21,7 @@ export default defineConfig({
   // https://umijs.org/zh-CN/plugins/plugin-locale
   locale: {
     // default zh-CN
-    default: 'zh-CN',
+    default: 'en-US',
     antd: true,
     // default true, when it is true, will use `navigator.language` overwrite default
     baseNavigator: true,
@@ -59,6 +59,24 @@ export default defineConfig({
           icon: 'smile',
           path: '/user/register',
           component: './user/register',
+        },
+        {
+          path: '/user/forgotpassword',
+          layout: false,
+          name: 'forgotpassword',
+          component: './user/forgotpassword',
+        },
+        {
+          path: '/user/resetpassword',
+          layout: false,
+          name: 'resetpassword',
+          component: './user/resetpassword',
+        },
+        {
+          path: '/user/activateaccount',
+          layout: false,
+          name: 'activateaccount',
+          component: './user/activateaccount',
         },
         {
           component: '404',
@@ -184,6 +202,12 @@ export default defineConfig({
           icon: 'smile',
           path: '/permissions/edit/:id',
           component: './permission/update',
+        },
+        {
+          name: 'Manage',
+          icon: 'smile',
+          path: '/permissions/manage',
+          component: './permission/manage',
         },
       ],
     },
