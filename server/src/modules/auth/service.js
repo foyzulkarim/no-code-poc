@@ -16,7 +16,8 @@ const changePassword = async (user, newPassword) => {
   const id = user._id;
   const model = await Model.findById(id);
   if (model) {
-    await Model.setPassword(model, newPassword);
+    model.passwordHash = await Model.getHashedPassword(newPassword);
+    model.passwordResetToken = null;
     model.updatedAt = Date.now().toString();
     model.save();
     return model._id;
@@ -59,14 +60,7 @@ const createUser = async (user) => {
 const tryCreateUser = async (user) => {
   const { username, phoneNumber, email } = user;
   const query = {
-    $or: [
-      // { phoneNumber: { $regex: phoneNumber, $options: "i" } },
-      // { email: { $regex: email, $options: "i" } },
-      // { username: { $regex: username, $options: "i" } },
-      { phoneNumber },
-      { email },
-      { username },
-    ],
+    $or: [{ phoneNumber }, { email }, { username }],
   };
   const item = await Model.findOne(query);
   if (item) {

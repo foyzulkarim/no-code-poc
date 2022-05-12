@@ -9,9 +9,10 @@ const save = async (item, modelName) => {
 };
 
 const update = async (item, modelName) => {
-  const doc = await mongoose.models[modelName].findOneAndUpdate(
+  const doc = await mongoose.models[modelName].updateOne(
     { _id: item._id },
-    item
+    item,
+    {}
   );
   eventEmitter.emit(`${modelName}Updated`, doc);
   return doc;
@@ -46,14 +47,14 @@ const searchOne = async (query, modelName) => {
   return data;
 };
 
-const searchAll = async (query, modelName) => {
+const dynamicSearch = async (query, modelName) => {
   const data = await mongoose.models[modelName].find(query).lean().exec();
   return data;
 };
 
 const getSortClause = (payload) => {
   let sort = {};
-  if (payload?.sort) {
+  if (payload.sort) {
     const key = payload.sort;
     const value = parseInt(payload.order, 10) ?? 1;
     sort[key] = value;
@@ -73,11 +74,11 @@ const search = async (payload, query, modelName) => {
   const take = parseInt(process.env.DEFAULT_PAGE_SIZE, 10);
   const skip = (parseInt(payload.current, 10) - 1) * take;
 
-  const data = await mongoose.models[modelName]
-    .find(query)
-    .sort(sort)
-    .skip(skip)
-    .limit(take);
+  const data = mongoose.models[modelName].find(query).sort(sort);
+  const result =
+    payload.pageSize === -1
+      ? await data.lean().exec()
+      : await data.skip(skip).limit(take).lean().exec();
 
   return data;
 };
@@ -145,12 +146,10 @@ module.exports = {
   deleteById,
   getById,
   searchOne,
-  dynamicSearch: searchAll,
+  dynamicSearch,
   updateAll,
   getSortClause,
   count,
   search,
   getDropdownData,
-  dynamicSave,
-  dynamicSearch2,
 };
