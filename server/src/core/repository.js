@@ -152,4 +152,6 @@ module.exports = {
   count,
   search,
   getDropdownData,
+  dynamicSave,
+  dynamicSearch2,
 };

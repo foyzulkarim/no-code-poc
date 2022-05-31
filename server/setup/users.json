@@ -8,7 +8,8 @@
         "email": "superadmin@mernboilerplate.com",
         "roleId": "",
         "roleAlias": "Super Admin",
-        "password": "mern-boilerplate"
+        "password": "mern-boilerplate",
+        "isActive": true
     },
     {
         "firstName": "Admin",
